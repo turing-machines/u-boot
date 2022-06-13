@@ -19,4 +19,4 @@ build_docproc: $(obj)/docproc
 
 # Let clean descend into subdirs
 subdir-	+= basic kconfig
-#subdir-$(CONFIG_DTC)	+= dtc
+subdir-$(CONFIG_DTC)	+= dtc
