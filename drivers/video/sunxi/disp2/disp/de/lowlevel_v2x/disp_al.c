@@ -698,6 +698,10 @@ int disp_al_lcd_get_clk_info(u32 screen_id, struct lcd_clk_info *info,
 			break;
 		}
 	}
+	if(panel->lcd_dclk_freq < 57 && panel->lcd_dclk_freq >= 3){
+		tcon_div = 288/panel->lcd_dclk_freq;
+	}
+
 
 #if defined(DSI_VERSION_40)
 	if (panel->lcd_if == LCD_IF_DSI) {
