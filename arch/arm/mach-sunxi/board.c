@@ -306,6 +306,7 @@ uint32_t sunxi_get_boot_device(void)
 	case SUNXI_BOOTED_FROM_MMC2_HIGH:
 		return BOOT_DEVICE_MMC2;
 	case SUNXI_BOOTED_FROM_SPI:
+	case SUNXI_BOOTED_FROM_SPI_NAND:
 		return BOOT_DEVICE_SPI;
 	}
 
