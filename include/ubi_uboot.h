@@ -52,6 +52,11 @@ extern int ubi_part(char *part_name, const char *vid_header_offset);
 extern int ubi_volume_write(char *volume, void *buf, size_t size);
 extern int ubi_volume_read(char *volume, char *buf, size_t size);
 
+#ifdef CONFIG_DM_MTD
+extern int ubi_dm_bind(unsigned int);
+extern int ubi_dm_unbind_all(void);
+#endif
+
 extern struct ubi_device *ubi_devices[];
 int cmd_ubifs_mount(char *vol_name);
 int cmd_ubifs_umount(void);

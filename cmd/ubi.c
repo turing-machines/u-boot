@@ -560,6 +560,13 @@ static int ubi_detach(void)
 		cmd_ubifs_umount();
 #endif
 
+#ifdef CONFIG_DM_MTD
+	/*
+	 * Clean up any UBI devices in DM
+	 */
+	ubi_dm_unbind_all();
+#endif
+
 	/*
 	 * Call ubi_exit() before re-initializing the UBI subsystem
 	 */
@@ -597,6 +604,10 @@ int ubi_part(char *part_name, const char *vid_header_offset)
 		printf("Please check, if the correct MTD partition is used (size big enough?)\n");
 		return err;
 	}
+
+#ifdef CONFIG_DM_MTD
+	ubi_dm_bind(0);
+#endif
 
 	ubi = ubi_devices[0];
 
