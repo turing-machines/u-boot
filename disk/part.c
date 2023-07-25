@@ -14,6 +14,9 @@
 #include <malloc.h>
 #include <part.h>
 #include <ubifs_uboot.h>
+#include <dm.h>
+#include <dm/device-internal.h>
+#include <dm/uclass-internal.h>
 
 #undef	PART_DEBUG
 
@@ -528,6 +531,58 @@ int blk_get_device_part_str(const char *ifname, const char *dev_part_str,
 		strcpy((char *)info->type, BOOT_PART_TYPE);
 		strcpy((char *)info->name, "UBI");
 		return 0;
+	}
+#endif
+
+#if IS_ENABLED(CONFIG_CMD_UBI) && !IS_ENABLED(CONFIG_SPL_BUILD)
+	/*
+	 * Also special-case UBI, which may use names to find the specific
+	 * volumes, so this deviates a bit from the typical devnum:partnum
+	 * syntax.
+	 */
+	if (!strcmp(ifname, "ubi")) {
+		dev = dectoul(dev_part_str, &ep);
+		if (*ep == ':') {
+			struct udevice *ubi_dev = NULL;
+			struct udevice *vol_dev = NULL;
+			part_str = &ep[1];
+
+			ret = uclass_find_device(UCLASS_UBI, dev, &ubi_dev);
+			if (!ubi_dev || ret) {
+				printf("** Cannot find UBI %x\n", dev);
+				return -EINVAL;
+			}
+
+			part = dectoul(part_str, &ep);
+			if (!*ep) {
+				struct udevice *tmp_dev;
+				device_foreach_child(tmp_dev, ubi_dev) {
+					struct blk_desc *desc = dev_get_uclass_plat(tmp_dev);
+					if (desc->devnum == part) {
+						vol_dev = tmp_dev;
+						break;
+					}
+				}
+			} else {
+				ret = device_find_child_by_name(ubi_dev, part_str, &vol_dev);
+			}
+
+			if (!vol_dev || ret) {
+				printf("** UBI volume %s not found\n", part_str);
+				return -EINVAL;
+			}
+
+			ret = device_probe(vol_dev);
+			if (ret)
+				return ret;
+
+			*desc = dev_get_uclass_plat(vol_dev);
+			part_get_info_whole_disk(*desc, info);
+			return 0;
+		}
+
+		printf("UBIFS not mounted, use ubifsmount to mount volume first!\n");
+		return -EINVAL;
 	}
 #endif
 
