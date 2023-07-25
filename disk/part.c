@@ -518,15 +518,13 @@ int blk_get_device_part_str(const char *ifname, const char *dev_part_str,
 
 #if IS_ENABLED(CONFIG_CMD_UBIFS) && !IS_ENABLED(CONFIG_SPL_BUILD)
 	/*
-	 * Special-case ubi, ubi goes through a mtd, rather than through
-	 * a regular block device.
+	 * Special-case ubifs, which does not go through the block device layer
+	 * and also must be mounted ahead of time. U-Boot has historically
+	 * called this "ubi" too, even though *static* UBI volumes are
+	 * accessible as block devices. For backward compatibility, assume that
+	 * when UBIFS is mounted, the user intends "ubi" to mean "ubifs."
 	 */
-	if (!strcmp(ifname, "ubi")) {
-		if (!ubifs_is_mounted()) {
-			printf("UBIFS not mounted, use ubifsmount to mount volume first!\n");
-			return -EINVAL;
-		}
-
+	if (ubifs_is_mounted() && !strcmp(ifname, "ubi")) {
 		strcpy((char *)info->type, BOOT_PART_TYPE);
 		strcpy((char *)info->name, "UBI");
 		return 0;
