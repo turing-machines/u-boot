@@ -463,6 +463,10 @@ void board_init_f(ulong dummy)
 	tzpc_init();
 #endif
 
+#if defined(CONFIG_BOARD_EARLY_INIT_F)
+	board_early_init_f();
+#endif
+
 	clock_init();
 	timer_init();
 	gpio_init();
