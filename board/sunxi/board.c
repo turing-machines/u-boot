@@ -109,6 +109,14 @@ void i2c_init_board(void)
 #endif
 #endif
 
+#if CONFIG_I2C2_ENABLE
+#if defined(CONFIG_MACH_SUN8I_R528)
+	sunxi_gpio_set_cfgpin(SUNXI_GPE(12), SUN8I_R528_GPE_TWI2);
+    sunxi_gpio_set_cfgpin(SUNXI_GPE(13), SUN8I_R528_GPE_TWI2);
+	clock_twi_onoff(2, 1);
+#endif
+#endif
+
 #ifdef CONFIG_R_I2C_ENABLE
 #ifdef CONFIG_MACH_SUN50I
 	clock_twi_onoff(5, 1);

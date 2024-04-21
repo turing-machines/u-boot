@@ -809,6 +809,12 @@ config I2C1_ENABLE
 	---help---
 	See I2C0_ENABLE help text.
 
+config I2C2_ENABLE
+	bool "Enable I2C/TWI controller 2"
+	select CMD_I2C
+	---help---
+	See I2C0_ENABLE help text.
+
 if SUNXI_GEN_SUN6I || SUN50I_GEN_H6
 config R_I2C_ENABLE
 	bool "Enable the PRCM I2C/TWI controller"
