@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
  * Copyright (C) 2023 Sam Edwards <CFSworks@gmail.com>
+ * Copyright (C) 2024 Sven Rademakers <sven@turingpi.com>
  *
  * Early init for the Turing Pi 2 clusterboard.
  */
@@ -25,5 +26,11 @@ int board_early_init_f(void)
 {
 	turingpi2_ethsw_rst();
 
-	return 0;
+    u32 cookie = readl(TURING_PI2_BOOT_COOKIE_ADDR);
+    if (cookie == TURING_PI2_BOOT_COOKIE_FEL) {
+        writel(TURING_PI2_BOOT_COOKIE_WARM, TURING_PI2_BOOT_COOKIE_ADDR);
+        // signal FEL
+        return 1;
+    }
+    return 0;
 }
