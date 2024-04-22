@@ -12,6 +12,10 @@ obj-y += panic.o
 obj-y += version.o
 
 # command
+obj-$(CONFIG_CMD_TPI_INFO) += tpi_info.o
+ifdef CONFIG_CMD_TPI_INFO
+	ccflags-y += -Iboard/turing/pi2/
+endif
 obj-$(CONFIG_CMD_ARMFFA) += armffa.o
 obj-$(CONFIG_CMD_2048) += 2048.o
 obj-$(CONFIG_CMD_ACPI) += acpi.o

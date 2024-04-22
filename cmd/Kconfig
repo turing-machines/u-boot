@@ -1223,6 +1223,11 @@ config CMD_I2C
 	help
 	  I2C support.
 
+config CMD_TPI_INFO
+	bool "tpi_info"
+	help
+	  helper tool to load spl handoff
+
 config CMD_W1
 	depends on W1
 	default y if W1
