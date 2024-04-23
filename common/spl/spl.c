@@ -664,7 +664,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	}
 	timer_init();
 	if (CONFIG_IS_ENABLED(BLOBLIST)) {
-		ret = bloblist_init();
+		ret = bloblist_maybe_init();
 		if (ret) {
 			debug("%s: Failed to set up bloblist: ret=%d\n",
 			      __func__, ret);
