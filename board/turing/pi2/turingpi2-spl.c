@@ -127,3 +127,36 @@ int tp_board_init(void) {
 #endif
   return 0;
 }
+
+#if CONFIG_IS_ENABLED(OF_CONTROL)
+/// This method determines which device tree to load. The main
+/// difference between 2.4 and 2.5 concerning the bootloader is the difference
+/// in flash size. If we load the wrong dt, it can mean booting will fail as
+/// the ubi mount cannot be mounted properly. ( due to not all pages being
+/// visible of the flash)
+int board_fit_config_name_match(const char *name) {
+#if CONFIG_IS_ENABLED(BLOBLIST)
+  int init_res = bloblist_maybe_init();
+  if (init_res != 0) {
+    debug("Error initializing bloblist: %d\n", init_res);
+    return -ENODATA;
+  }
+
+  // Get the blob data
+  tpi_board_info *info =
+      (tpi_board_info *)bloblist_find(BLOBLISTT_U_BOOT_SPL_HANDOFF, 0);
+
+  if (!info) {
+    debug("Error: spl handoff blob not found\n");
+    return -ENODATA;
+  }
+
+  int v2_4_match = info->hw_version == TP_VER(2, 4, 0) && strstr(name, "-v2.4");
+  int v2_5_match = info->hw_version >= TP_VER(2, 5, 0) && strstr(name, "-v2.5");
+  if (v2_4_match || v2_5_match) {
+    return 0;
+  }
+  return -EINVAL;
+#endif
+}
+#endif

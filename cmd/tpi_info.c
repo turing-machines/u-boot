@@ -92,8 +92,8 @@ int sprintfstr(tpi_board_info *info, const char *env_name, size_t offsetoff) {
 
 int sprintfmac(tpi_board_info *info, const char *env_name) {
   char buffer[13] = {0};
-  sprintf(buffer,"%02X%02X%02X%02X%02X%02X\n", info->mac[0], info->mac[1], info->mac[2],
-         info->mac[3], info->mac[4], info->mac[5]);
+  sprintf(buffer, "%02X%02X%02X%02X%02X%02X", info->mac[0], info->mac[1],
+          info->mac[2], info->mac[3], info->mac[4], info->mac[5]);
   return save_to_env(env_name, buffer);
 }
 
@@ -137,14 +137,14 @@ int do_tpi_info(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[]) {
   if (argc >= 3) {
     env_name = argv[2];
     if (env_name[0] == '\0') {
-      printf("provided an empty var name");
+      printf("provided an empty var name\n");
       return CMD_RET_FAILURE;
     }
   }
 
   int init_res = bloblist_maybe_init();
   if (init_res != 0) {
-    printf("Error initializing bloblist: %d", init_res);
+    printf("Error initializing bloblist: %d\n", init_res);
     return CMD_RET_FAILURE;
   }
 
