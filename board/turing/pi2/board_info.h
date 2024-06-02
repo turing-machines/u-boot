@@ -17,7 +17,7 @@ typedef struct tpi_board_info {
     uint16_t hw_version;
     // days since may 1st 2024. Date when this board was flashed in the factory
     uint16_t factory_date;
-    char factory_serial[8];
+    char factory_serial[16];
     char product_name[16];
     char mac[6];
 } tpi_board_info;
