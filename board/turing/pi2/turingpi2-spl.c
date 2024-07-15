@@ -36,14 +36,22 @@ static void turingpi2_ethsw_rst(u16 tpi_version) {
 }
 
 static void init_latches(u16 tpi_version) {
-  if (tpi_version > TP_VER(2, 5, 0)) {
+  if (tpi_version >= TP_VER(2, 5, 0)) {
     gpio_direction_output(SUNXI_GPD(7), 0);
     gpio_direction_output(SUNXI_GPD(6), 0);
     gpio_direction_output(SUNXI_GPD(5), 0);
+    gpio_direction_output(SUNXI_GPD(3), 0);
     gpio_direction_output(SUNXI_GPD(4), 0);
-    // store new state inside latch_state_addr
+    gpio_direction_output(SUNXI_GPD(8), 0);
+    gpio_direction_output(SUNXI_GPD(9), 0);
+    gpio_direction_output(SUNXI_GPD(10), 0);
+    gpio_direction_output(SUNXI_GPD(11), 0);
+    gpio_direction_output(SUNXI_GPD(20), 1);
+    udelay(50);
+
+    // reset state of latch_state_addr
     u16 latch_state = readl(TURING_PI2_LATCH_STATE_ADDR);
-    writel(latch_state & ~0xF, TURING_PI2_LATCH_STATE_ADDR);
+    writel(latch_state & 0xFFFFFE00, TURING_PI2_LATCH_STATE_ADDR);
   }
 }
 
