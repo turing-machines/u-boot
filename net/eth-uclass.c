@@ -574,18 +574,23 @@ static int eth_post_probe(struct udevice *dev)
 
 	eth_env_get_enetaddr_by_index("eth", dev_seq(dev), env_enetaddr);
 	if (!is_zero_ethaddr(env_enetaddr)) {
-		if (!is_zero_ethaddr(pdata->enetaddr) &&
+		if (is_valid_ethaddr(pdata->enetaddr) &&
 		    memcmp(pdata->enetaddr, env_enetaddr, ARP_HLEN)) {
-			printf("\nWarning: %s MAC addresses don't match:\n",
-			       dev->name);
-			printf("Address in %s is\t\t%pM\n",
+			printf("MAC Address %s is\t%pM\n",
 			       source, pdata->enetaddr);
 			printf("Address in environment is\t%pM\n",
 			       env_enetaddr);
-		}
+			printf("\nWarning: Updating environment %s MAC address\n",
+			       dev->name);
+		    eth_env_set_enetaddr_by_index("eth", dev_seq(dev),
+					      pdata->enetaddr);
+            memcpy(env_enetaddr, pdata->enetaddr, ARP_HLEN);
+        }
 
-		/* Override the ROM MAC address */
-		memcpy(pdata->enetaddr, env_enetaddr, ARP_HLEN);
+        /* Override the ROM MAC address */
+        memcpy(pdata->enetaddr, env_enetaddr, ARP_HLEN);
+
+        // all is oke, env and DTS are equal
 	} else if (is_valid_ethaddr(pdata->enetaddr)) {
 		eth_env_set_enetaddr_by_index("eth", dev_seq(dev),
 					      pdata->enetaddr);
@@ -598,9 +603,11 @@ static int eth_post_probe(struct udevice *dev)
 		eth_env_set_enetaddr_by_index("eth", dev_seq(dev),
 					      pdata->enetaddr);
 #else
-		printf("\nError: %s No valid MAC address found.\n",
-		       dev->name);
-		return -EINVAL;
+        // if there is no mac address configured, used sid generated variant
+		eth_env_get_enetaddr_by_index("sid_eth", dev_seq(dev),
+					      pdata->enetaddr);
+		eth_env_set_enetaddr_by_index("eth", dev_seq(dev),
+					      pdata->enetaddr);
 #endif
 	}
 

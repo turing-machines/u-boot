@@ -98,12 +98,9 @@ int eth_env_set_enetaddr(const char *name, const uint8_t *enetaddr)
 {
 	char buf[ARP_HLEN_ASCII + 1];
 
-	if (eth_env_get_enetaddr(name, (uint8_t *)buf))
-		return -EEXIST;
-
 	sprintf(buf, "%pM", enetaddr);
 
-	return env_set(name, buf);
+	return env_set_force(name, buf);
 }
 
 /*

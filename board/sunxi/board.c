@@ -789,9 +789,9 @@ static void setup_environment(const void *fdt)
 			continue;
 
 		if (i == 0)
-			strcpy(ethaddr, "ethaddr");
+			strcpy(ethaddr, "sid_ethaddr");
 		else
-			sprintf(ethaddr, "eth%daddr", i);
+			sprintf(ethaddr, "sid_eth%daddr", i);
 
 		if (env_get(ethaddr))
 			continue;
