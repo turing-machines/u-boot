@@ -598,8 +598,11 @@ static int eth_post_probe(struct udevice *dev)
 		eth_env_set_enetaddr_by_index("eth", dev_seq(dev),
 					      pdata->enetaddr);
 #else
-		printf("\nError: %s No valid MAC address found.\n",
-		       dev->name);
+        // if there is no mac address configured, used sid generated variant
+		eth_env_get_enetaddr_by_index("sid_eth", dev_seq(dev),
+					      pdata->enetaddr);
+		eth_env_set_enetaddr_by_index("eth", dev_seq(dev),
+					      pdata->enetaddr);
 		return -EINVAL;
 #endif
 	}
